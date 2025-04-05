@@ -1,19 +1,26 @@
+"use client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GitBranch } from "lucide-react";
+import { redirect } from "next/navigation";
+import { useState } from "react";
 
-const NewProject = () => {
+const AddURL = () => {
+	const [gitUrl, setGitUrl] = useState("");
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setGitUrl(e.target.value);
+	};
 	return (
 		<div className="flex  justify-center items-center h-full w-full">
 			<Card className="w-1/2  p-6 bg-black">
 				<CardContent className="flex flex-col gap-4">
 					<CardTitle className="text-white text-2xl ">
-						Provide Your Git Url
+						Provide Your Git URL
 					</CardTitle>
 					<Label className="text-white -mb-2" htmlFor="git-url">
-						Git Repository Url
+						Git Repository URL (public url only)
 					</Label>
 					<div className="relative w-full">
 						<GitBranch
@@ -21,6 +28,8 @@ const NewProject = () => {
 							size={20}
 						/>
 						<Input
+							value={gitUrl}
+							onChange={handleInputChange}
 							id="git-url"
 							type="url"
 							placeholder="Enter your Git URL"
@@ -28,14 +37,13 @@ const NewProject = () => {
 							className="text-white pl-10 invalid:border-red"
 						/>
 					</div>
-					<Button type="button">Continue</Button>
+					<Button type="button" onClick={()=>redirect(`new/deploy?gitUrl=${gitUrl}`)} >
+						Continue
+					</Button>
 				</CardContent>
-				<CardFooter>
-					<p>Card Footer</p>
-				</CardFooter>
 			</Card>
 		</div>
 	);
 };
 
-export default NewProject;
+export default AddURL;
