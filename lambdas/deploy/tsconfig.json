@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"target": "ES2021", // Good balance of modern features & compatibility
+		"module": "CommonJS", // AWS Lambda requires CommonJS for Node.js runtime
+		"lib": ["ES2021"],
+		"outDir": "dist", // Compiled output folder
+		"strict": true, // Enables all strict type-checking options
+		"esModuleInterop": true, // Allows default import from CommonJS modules
+		"forceConsistentCasingInFileNames": true,
+		"moduleResolution": "node",
+		"resolveJsonModule": true, // Lets you import JSON files
+		"noImplicitAny": true, // Prevents usage of `any` type without explicit declaration
+		"skipLibCheck": true // Speeds up compilation
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist"]
+}
