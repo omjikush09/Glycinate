@@ -1,0 +1,17 @@
+*.zip
+
+.terraform/
+
+# Local state files
+*.tfstate
+*.tfstate.backup
+
+# Crash logs
+crash.log
+
+# Override files
+*.tfvars
+*.tfvars.json
+
+# Plan output
+*.tfplan

@@ -17,7 +17,6 @@ const getBuildCOnfig = ({
 		source: {
 			type: provider,
 			location: gitUrl,
-            
 		},
 		artifacts: {
 			type: ArtifactsType.S3,
@@ -27,17 +26,15 @@ const getBuildCOnfig = ({
 		},
 		environment: {
 			type: EnvironmentType.LINUX_LAMBDA_CONTAINER,
-			computeType:ComputeType.BUILD_LAMBDA_1GB,
+			computeType: ComputeType.BUILD_LAMBDA_1GB,
 			image: "aws/codebuild/amazonlinux-x86_64-lambda-standard:nodejs20",
-            environmentVariables: Object.entries(env).map(([key, value]) => ({
-                name: key,
-                value: value,
-                type: "PLAINTEXT",
-            })),
-            
+			environmentVariables: Object.entries(env).map(([key, value]) => ({
+				name: key,
+				value: value,
+				type: "PLAINTEXT",
+			})),
 		},
-        serviceRole: "arn:aws:iam::123456789012:role/service-role/codebuild-service-role",
-        sourceVersion: gitBranch,
-        
+		serviceRole: process.env.CODEBUILD_EXECUTION_ROLE_ARN,
+		sourceVersion: gitBranch,
 	};
 };
