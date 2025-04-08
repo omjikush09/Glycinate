@@ -8,6 +8,8 @@ resource "aws_iam_role_policy" "lambdaExecutionRolePolicy" {
         Action = [
           "codebuild:StartBuild",
           "codebuild:CreateProject",
+          "codebuild:BatchGetProjects",
+          "iam:PassRole"
         ],
         Effect   = "Allow",
         Resource = "*"
