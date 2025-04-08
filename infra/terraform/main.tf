@@ -8,13 +8,6 @@ terraform {
     }
 
   }
-
-  backend "s3" {
-    bucket  = "omji-terrafom"
-    key     = "glycinate/terraform.tfstate"
-    region  = "us-east-1"
-    encrypt = true
-  }
 }
 
 provider "aws" {
@@ -31,4 +24,3 @@ module "lambda" {
 module "iam" {
   source = "./modules/iam"
 }
-
