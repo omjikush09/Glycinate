@@ -1,0 +1,19 @@
+{
+	"name": "deploy",
+	"version": "1.0.0",
+	"main": "index.ts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "tsc"
+	},
+	"author": "omji",
+	"license": "ISC",
+	"description": "",
+	"devDependencies": {
+		"@types/node": "^22.14.0",
+		"typescript": "^5.8.3"
+	},
+	"dependencies": {
+		"@aws-sdk/client-sqs": "^3.787.0"
+	}
+}
