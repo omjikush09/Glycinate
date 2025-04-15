@@ -16,7 +16,8 @@ provider "aws" {
 
 module "lambda" {
   source         = "./modules/lambda"
-  lambda_src_dir = "${path.root}/../../lambdas/deploy"
+  lambda_ecs_start_src_dir = "${path.root}/../../../lambdas/start-ecs/dist"
+  lambda_add_to_sqs_src_dir = "${path.root}/../../../lambdas/add-to-sqs/dist"
   lambda_put_sqs_arn = module.iam.lambda_put_sqs_arn
   lambda_ecs_trigger_role_arn = module.iam.lambda_ecs_trigger_role_arn
   sqs_arn = module.sqs.sqs_arn

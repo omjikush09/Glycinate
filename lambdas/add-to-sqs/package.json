@@ -4,13 +4,14 @@
 	"main": "index.ts",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"build": "tsc"
+		"build": "node build.mjs"
 	},
 	"author": "omji",
 	"license": "ISC",
 	"description": "",
 	"devDependencies": {
 		"@types/node": "^22.14.0",
+		"esbuild": "^0.25.2",
 		"typescript": "^5.8.3"
 	},
 	"dependencies": {

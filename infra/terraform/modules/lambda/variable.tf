@@ -1,7 +1,10 @@
-variable "lambda_src_dir" {
+variable "lambda_ecs_start_src_dir" {
   type = string
 }
 
+variable "lambda_add_to_sqs_src_dir" {
+  type = string
+}
 variable "lambda_ecs_trigger_role_arn" {
   type = string
 }
