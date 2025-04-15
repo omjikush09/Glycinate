@@ -17,10 +17,25 @@ provider "aws" {
 module "lambda" {
   source         = "./modules/lambda"
   lambda_src_dir = "${path.root}/../../lambdas/deploy"
-  codebuild_execution_role_arn= module.iam.codebuild_execution_role_arn
-  lambda_execution_role_arn = module.iam.lambda_execution_role_arn
+  lambda_put_sqs_arn = module.iam.lambda_put_sqs_arn
+  lambda_ecs_trigger_role_arn = module.iam.lambda_ecs_trigger_role_arn
+  sqs_arn = module.sqs.sqs_arn
 }
 
 module "iam" {
   source = "./modules/iam"
+  sqs_arn = module.sqs.sqs_arn
+}
+
+module "sqs" {
+  source = "./modules/sqs"
+}
+module "ecr" {
+  source = "./modules/ecr"
+  
+}
+
+module "ecs" {
+  source = "./modules/ecs"
+  ecr_image_url="d"
 }
