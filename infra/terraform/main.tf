@@ -15,17 +15,23 @@ provider "aws" {
 }
 
 module "lambda" {
-  source         = "./modules/lambda"
-  lambda_ecs_start_src_dir = "${path.root}/../../../lambdas/start-ecs/dist"
-  lambda_add_to_sqs_src_dir = "${path.root}/../../../lambdas/add-to-sqs/dist"
-  lambda_put_sqs_arn = module.iam.lambda_put_sqs_arn
+  source                      = "./modules/lambda"
+  lambda_ecs_start_src_dir    = "${path.root}/../../lambdas/start-ecs/dist"
+  lambda_add_to_sqs_src_dir   = "${path.root}/../../lambdas/add-to-sqs/dist"
+  lambda_put_sqs_arn          = module.iam.lambda_put_sqs_arn
   lambda_ecs_trigger_role_arn = module.iam.lambda_ecs_trigger_role_arn
-  sqs_arn = module.sqs.sqs_arn
+  sqs_arn                     = module.sqs.sqs_arn
+  sqs_url                     = module.sqs.sqs_url
+  glycinate_cluster_name      = module.ecs.glycinate_cluster_name
+  aws_bucket                  = var.AWS_BUCKET
 }
 
 module "iam" {
-  source = "./modules/iam"
+  source  = "./modules/iam"
   sqs_arn = module.sqs.sqs_arn
+  ecs_task_definition_arn = module.ecs.ecs_task_definition_arn
+  ecs_task_defination_role_arn = module.ecs.ecs_task_defination_role_arn
+  AWS_BUCKET_ARN = module.s3.S3_BUCKET_ARN
 }
 
 module "sqs" {
@@ -33,10 +39,26 @@ module "sqs" {
 }
 module "ecr" {
   source = "./modules/ecr"
-  
+
 }
 
 module "ecs" {
-  source = "./modules/ecs"
-  ecr_image_url="d"
+  source        = "./modules/ecs"
+  ecr_image_url = "${var.AWS_ACCOUNT_ID}.dkr.ecr.${var.AWS_REGION}.amazonaws.com/glycinate:latest"
+}
+
+module "s3" {
+  source      = "./modules/s3"
+  bucket_name = var.AWS_BUCKET
+}
+
+variable "AWS_ACCOUNT_ID" {
+  type = number
+}
+variable "AWS_REGION" {
+  type = string
+}
+
+variable "AWS_BUCKET" {
+  type = string
 }

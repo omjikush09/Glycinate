@@ -16,3 +16,16 @@ variable "lambda_put_sqs_arn" {
 variable "sqs_arn" {
   type = string
 }
+variable "sqs_url" {
+  type = string
+}
+
+variable "glycinate_cluster_name" {
+  type = string
+}
+variable "aws_bucket" {
+  type = string
+}
+
+
+

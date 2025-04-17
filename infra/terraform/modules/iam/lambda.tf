@@ -9,10 +9,30 @@ resource "aws_iam_role_policy" "lambda_trigger_ecs_role" {
         Action = [
           "sqs:ReceiveMessage",
           "sqs:DeleteMessage",
-          "sqs:GetQueueAtrributes"
+          "sqs:GetQueueAttributes"
         ],
         Effect   = "Allow",
         Resource = var.sqs_arn
+      },
+      {
+        Action=[
+          "ecs:RunTask",
+          "ecs:DescribeTasks",
+        ]
+        Effect="Allow",
+        Resource=var.ecs_task_definition_arn
+      },{
+        Action=[
+          "iam:PassRole"
+        ],
+        Effect="Allow",
+        Resource=var.ecs_task_defination_role_arn
+      },{
+        Effect="Allow",
+        Action=[
+         "s3:*", 
+        ]
+        Resource="*"
       }
 
     ]
@@ -49,7 +69,7 @@ resource "aws_iam_role_policy_attachment" "lambdaExecutionRolePolicyAtachment" {
 
 resource "aws_iam_role" "lambda_put_sqs" {
   assume_role_policy = jsonencode({
-    Version:"2017-10-17",
+    Version:"2012-10-17",
     Statement:[
       {
         Effect:"Allow",
@@ -65,7 +85,7 @@ resource "aws_iam_role_policy" "lambda_put_sqs_policy" {
   name = "lambda_put_sqs_policy"
    role= aws_iam_role.lambda_put_sqs.id
    policy = jsonencode({
-      Version:"2017-10-17",
+      Version:"2012-10-17",
       Statement:[
         {
           Effect:"Allow",
@@ -78,3 +98,7 @@ resource "aws_iam_role_policy" "lambda_put_sqs_policy" {
    })
 }
 
+resource "aws_iam_role_policy_attachment" "lambdaExecutionRolePolicyAtachment_lambda_put_sqs" {
+  role       = aws_iam_role.lambda_put_sqs.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}

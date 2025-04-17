@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -exuo pipefail
 
 # Ensure the scratch directory is clean and set up
 echo "[*] Starting secure build in $SCRATCH_DIR"
@@ -8,7 +8,10 @@ cd "$SCRATCH_DIR"
 
 # Clone the Git repository (provided via environment variable)
 echo "[*] Cloning repo..."
-git clone "$GIT_REPO" . || { echo "❌ Clone failed"; exit 1; }
+git clone "$GIT_URL" . || { echo "❌ Clone failed"; exit 1; }
+
+echo "[*] Checking out branch: $GIT_BRANCH"
+git checkout "$GIT_BRANCH" || { echo "❌ Failed to checkout branch $GIT_BRANCH"; exit 1; }
 
 # Install dependencies using the command provided in the environment variable
 echo "[*] Installing dependencies with: $INSTALL_CMD"
@@ -24,7 +27,7 @@ zip -r "$BUILD_OUTPUT" ./dist || { echo "❌ Packaging failed"; exit 1; }
 
 # Upload the build result to the signed S3 URL
 echo "[*] Uploading to signed S3 URL..."
-if curl --fail -X PUT -T "$BUILD_OUTPUT" "$SIGNED_S3_URL"; then
+if curl -v --fail -H "User-Agent: Mozilla/5.0" -H "Content-Type: application/zip" -X PUT -T "$BUILD_OUTPUT" "$SIGNED_S3_URL"; then
   echo "[✓] Upload succeeded"
 else
   echo "❌ Upload failed"
