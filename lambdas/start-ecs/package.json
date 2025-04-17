@@ -4,12 +4,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build":"node build.mjs"
+    "build": "node build.mjs"
   },
   "author": "omji",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/aws-lambda": "^8.10.149",
     "@types/node": "^22.14.1",
     "esbuild": "^0.25.2",
     "typescript": "^5.8.3"

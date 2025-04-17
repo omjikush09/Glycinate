@@ -1,12 +1,11 @@
 import {
 	ECSClient,
-	ECSClientConfig,
 	RunTaskCommand,
 	RunTaskCommandInput,
 } from "@aws-sdk/client-ecs";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import cluster from "cluster";
+import { SQSEvent } from "aws-lambda";
 
 type provider = "GITHUB";
 
@@ -20,19 +19,20 @@ type DeployEvent = {
 	buildCommand: string;
 };
 
-const MAX_FILE_SIZE = 100 * 1024 * 1024;
 
-const handler = async (event: DeployEvent) => {
+export const handler = async (event: SQSEvent) => {
+	console.log(event);
+	const message: DeployEvent = JSON.parse(event.Records[0].body);
 	const config = {
 		region: "us-east-1",
 	};
 	const s3Client = new S3Client(config);
 	const command = new PutObjectCommand({
-		Bucket: "test",
-		Key: `event/${event.projectName}`,
+		Bucket: process.env.AWS_BUCKET,
+		Key: `output/${message.projectName}`,
 		ContentType: "application/zip",
-		ContentLength: MAX_FILE_SIZE,
 	});
+	console.log(JSON.stringify(command));
 	let preSignedURL = "";
 	try {
 		preSignedURL = await getSignedUrl(s3Client, command, {
@@ -45,33 +45,41 @@ const handler = async (event: DeployEvent) => {
 	const ecsClinet = new ECSClient(config);
 
 	const runTaskCommandInput: RunTaskCommandInput = {
-		taskDefinition: process.env.TASK_DEFINATION_NAME,
-		cluster: process.env.CLUSTER_NAMME,
+		taskDefinition: process.env.TASK_DEFINITION_NAME,
+		cluster: process.env.CLUSTER_NAME,
+		launchType: "FARGATE",
+		networkConfiguration: {
+			awsvpcConfiguration: {
+				subnets: [process.env.DEFAULT_SUBNET ?? ""],
+				securityGroups: [process.env.DEFAULT_SECURITY_GROUP ?? ""],
+				assignPublicIp: "ENABLED",
+			},
+		},
 		overrides: {
 			containerOverrides: [
 				{
-					name: "test",
+					name: "glycinate_container",
 					environment: [
 						{
-							name: "PRE_SIGNED_URL",
+							name: "SIGNED_S3_URL",
 							value: preSignedURL,
 						},
 						{
-							name: "BUID_COMMAND",
-							value: event?.buildCommand,
+							name: "BUILD_CMD",
+							value: message?.buildCommand,
 						},
 						{
 							name: "GIT_URL",
-							value: event?.gitUrl,
+							value: message?.gitUrl,
 						},
 						{
-                            name:"GIT_BRANCH",
-                            value:event?.branch
-                        },
-                        {
-                            name:"PROJECT_NAME",
-                            value:event?.projectName
-                        }
+							name: "GIT_BRANCH",
+							value: message?.branch,
+						},
+						{
+							name: "BUILD_OUTPUT",
+							value: `${message?.projectName}.zip`,
+						},
 					],
 				},
 			],
@@ -81,10 +89,8 @@ const handler = async (event: DeployEvent) => {
 	const taskRunCommand = new RunTaskCommand(runTaskCommandInput);
 	try {
 		const responseRunTask = await ecsClinet.send(taskRunCommand);
-		console.log("RespnseRunTask " + responseRunTask);
+		console.log("RespnseRunTask " + JSON.stringify(responseRunTask));
 	} catch (error) {
 		throw error;
 	}
 };
-
-export default handler;

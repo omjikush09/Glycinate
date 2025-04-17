@@ -10,7 +10,16 @@ const config = {
 };
 const client = new SQSClient(config);
 
+// {
+//   "gitUrl": "https://github.com/kelixirr/ReactDevs.git",
+//   "branch": "main",
+//   "provider": "GITHUB",
+//   "projectName": "test",
+//   "projectId": "first",
+//   "buildCommand": "npm run build"
+// }
 type provider = "GITHUB";
+
 
 type DeployEvent = {
 	gitUrl: string;
@@ -38,7 +47,9 @@ export const handler = async (event: DeployEvent) => {
 	const command=new SendMessageCommand(sendMessageInput);
 	try {
 		const response = await client.send(command);
+		console.log("RESPONSE"+response);
 	} catch (error) {
+		console.error("Error" + error)
 		return {
 			statusCode:400,
 			message:"Someting went wrong"
