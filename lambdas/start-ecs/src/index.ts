@@ -19,7 +19,6 @@ type DeployEvent = {
 	buildCommand: string;
 };
 
-
 export const handler = async (event: SQSEvent) => {
 	console.log(event);
 	const message: DeployEvent = JSON.parse(event.Records[0].body);
@@ -29,7 +28,7 @@ export const handler = async (event: SQSEvent) => {
 	const s3Client = new S3Client(config);
 	const command = new PutObjectCommand({
 		Bucket: process.env.AWS_BUCKET,
-		Key: `output/${message.projectName}`,
+		Key: `${message.projectName}.zip`,
 		ContentType: "application/zip",
 	});
 	console.log(JSON.stringify(command));
@@ -47,7 +46,6 @@ export const handler = async (event: SQSEvent) => {
 	const runTaskCommandInput: RunTaskCommandInput = {
 		taskDefinition: process.env.TASK_DEFINITION_NAME,
 		cluster: process.env.CLUSTER_NAME,
-		launchType: "FARGATE",
 		networkConfiguration: {
 			awsvpcConfiguration: {
 				subnets: [process.env.DEFAULT_SUBNET ?? ""],
@@ -55,6 +53,12 @@ export const handler = async (event: SQSEvent) => {
 				assignPublicIp: "ENABLED",
 			},
 		},
+		capacityProviderStrategy: [
+			{
+				capacityProvider: "FARGATE_SPOT",
+		
+			},
+		],
 		overrides: {
 			containerOverrides: [
 				{
