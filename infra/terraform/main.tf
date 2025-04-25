@@ -18,20 +18,24 @@ module "lambda" {
   source                      = "./modules/lambda"
   lambda_ecs_start_src_dir    = "${path.root}/../../lambdas/start-ecs/dist"
   lambda_add_to_sqs_src_dir   = "${path.root}/../../lambdas/add-to-sqs/dist"
+  lambda_unzip_dir            = "${path.root}/../../lambdas/unzip-output/dist"
   lambda_put_sqs_arn          = module.iam.lambda_put_sqs_arn
   lambda_ecs_trigger_role_arn = module.iam.lambda_ecs_trigger_role_arn
   sqs_arn                     = module.sqs.sqs_arn
   sqs_url                     = module.sqs.sqs_url
   glycinate_cluster_name      = module.ecs.glycinate_cluster_name
   aws_bucket                  = var.AWS_BUCKET
+  AWS_BUCKET_ARN              = module.s3.S3_BUCKET_ARN
+  AWS_BUCKET_FINAL_ARN        = module.s3.s3_bucket_final_arn
+  AWS_BUCKET_FINAL_NAME       = var.AWS_BUCKET_FINAL_NAME
 }
 
 module "iam" {
-  source  = "./modules/iam"
-  sqs_arn = module.sqs.sqs_arn
-  ecs_task_definition_arn = module.ecs.ecs_task_definition_arn
+  source                       = "./modules/iam"
+  sqs_arn                      = module.sqs.sqs_arn
+  ecs_task_definition_arn      = module.ecs.ecs_task_definition_arn
   ecs_task_defination_role_arn = module.ecs.ecs_task_defination_role_arn
-  AWS_BUCKET_ARN = module.s3.S3_BUCKET_ARN
+  AWS_BUCKET_ARN               = module.s3.S3_BUCKET_ARN
 }
 
 module "sqs" {
@@ -48,8 +52,9 @@ module "ecs" {
 }
 
 module "s3" {
-  source      = "./modules/s3"
-  bucket_name = var.AWS_BUCKET
+  source            = "./modules/s3"
+  bucket_name       = var.AWS_BUCKET
+  bucket_final_name = var.AWS_BUCKET_FINAL_NAME
 }
 
 variable "AWS_ACCOUNT_ID" {
@@ -60,5 +65,9 @@ variable "AWS_REGION" {
 }
 
 variable "AWS_BUCKET" {
+  type = string
+}
+
+variable "AWS_BUCKET_FINAL_NAME" {
   type = string
 }

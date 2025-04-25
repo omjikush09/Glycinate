@@ -5,6 +5,10 @@ variable "lambda_ecs_start_src_dir" {
 variable "lambda_add_to_sqs_src_dir" {
   type = string
 }
+
+variable "lambda_unzip_dir" {
+  type = string
+}
 variable "lambda_ecs_trigger_role_arn" {
   type = string
 }
@@ -27,5 +31,13 @@ variable "aws_bucket" {
   type = string
 }
 
+variable "AWS_BUCKET_ARN" {
+  type = string
+}
 
-
+variable "AWS_BUCKET_FINAL_ARN" {
+  type = string
+}
+variable "AWS_BUCKET_FINAL_NAME" {
+  type = string
+}

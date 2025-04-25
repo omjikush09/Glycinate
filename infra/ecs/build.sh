@@ -23,7 +23,8 @@ eval "$BUILD_CMD" || { echo "❌ Build failed"; exit 1; }
 
 # Package the output (e.g., a dist/ folder or other artifacts)
 echo "[*] Packaging output..."
-zip -r "$BUILD_OUTPUT" ./dist || { echo "❌ Packaging failed"; exit 1; }
+cd ./dist || { echo "❌ Failed to change directory to ./dist"; exit 1; }
+zip -r "$BUILD_OUTPUT" . || { echo "❌ Packaging failed"; exit 1; }
 
 # Upload the build result to the signed S3 URL
 echo "[*] Uploading to signed S3 URL..."
