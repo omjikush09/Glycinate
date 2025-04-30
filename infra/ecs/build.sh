@@ -14,6 +14,7 @@ echo "[*] Checking out branch: $GIT_BRANCH"
 git checkout "$GIT_BRANCH" || { echo "❌ Failed to checkout branch $GIT_BRANCH"; exit 1; }
 
 # Install dependencies using the command provided in the environment variable
+CD $BASE_FOLDER
 echo "[*] Installing dependencies with: $INSTALL_CMD"
 eval "$INSTALL_CMD" || { echo "❌ Dependency installation failed"; exit 1; }
 
@@ -23,7 +24,7 @@ eval "$BUILD_CMD" || { echo "❌ Build failed"; exit 1; }
 
 # Package the output (e.g., a dist/ folder or other artifacts)
 echo "[*] Packaging output..."
-cd ./dist || { echo "❌ Failed to change directory to ./dist"; exit 1; }
+cd $BUILD_FOLDER || { echo "❌ Failed to change directory to $BUILD_FOLDER"; exit 1; }
 zip -r "$BUILD_OUTPUT" . || { echo "❌ Packaging failed"; exit 1; }
 
 # Upload the build result to the signed S3 URL

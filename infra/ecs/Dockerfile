@@ -23,6 +23,8 @@ RUN ls -l /usr/local/bin/
 # Set environment variables for build process (these will be overridden at runtime)
 ENV BUILD_OUTPUT=output.zip
 ENV SCRATCH_DIR=/tmp/build
+ENV BUILD_FOLDER=./dist
+ENV BASE_FOLDER="."
 ENV INSTALL_CMD="npm install"
 ENV BUILD_CMD="npm run build"
 
