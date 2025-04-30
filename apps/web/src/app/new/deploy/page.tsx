@@ -1,5 +1,5 @@
 import { getBranches, getGitProvider } from "@/utils/git";
-import { Card, } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import {
 	Select,
 	SelectContent,
@@ -10,6 +10,7 @@ import {
 import { redirect } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import DeployForm from "@/app/componets/deployForm";
 
 const Deploy = async ({
 	searchParams,
@@ -33,33 +34,19 @@ const Deploy = async ({
 					{errorGitProvider && (
 						<p className="text-red-500">Git Provider not Supported </p>
 					)}
-					{!error && (
+					{!error && provider && branches && (
 						<>
 							<p className="text-white">Git URL - {repoUrl}</p>
 							<div className="flex justify-between  items-center gap-4">
-                                
-                                <p className="text-white text-2xl " >Provider - {provider}</p>
-								<div className=" flex flex-col gap-2" >
-									<Label className="text-white">Branches</Label>
-									<Select>
-										<SelectTrigger className="w-[180px]">
-											<SelectValue placeholder="Choose Branch" />
-										</SelectTrigger>
-										<SelectContent className="bg-black">
-											{branches?.map((branch) => (
-												<SelectItem
-													className="text-white"
-													key={branch}
-													value={branch}
-												>
-													{branch}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-								</div>
+								<p className="text-white text-2xl ">Provider - {provider}</p>
 							</div>
-                                <Button  >Deploy</Button>
+							<div className="flex justify-center items-center">
+								<DeployForm
+									gitUrl={repoUrl}
+									provider={provider}
+									branches={branches}
+								/>
+							</div>
 						</>
 					)}
 				</Card>
