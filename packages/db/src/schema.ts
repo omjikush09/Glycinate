@@ -10,7 +10,7 @@ export const userRelation = relations(userTable, ({ many }) => ({
 
 export const projectTable = pgTable("project", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	name: varchar(),
+	name: varchar().unique().notNull(),
 	buildCommand: varchar().default("npm run build"),
 	buildFolder: varchar().default("dist").notNull(),
 	sourceFolder: varchar().default("").notNull(),

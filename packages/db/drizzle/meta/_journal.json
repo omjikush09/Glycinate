@@ -15,6 +15,13 @@
       "when": 1746094676066,
       "tag": "0001_yellow_bulldozer",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1746241787832,
+      "tag": "0002_gifted_harry_osborn",
+      "breakpoints": true
     }
   ]
 }
