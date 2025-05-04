@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { redirect } from "next/navigation";
 import DeployForm from "@/app/components/DeployForm";
@@ -17,7 +16,6 @@ const Deploy = async ({
 }: {
 	searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
-	console.log(await searchParams);
 	const repoUrl = (await searchParams)?.gitUrl as string;
 	if (!repoUrl) {
 		redirect("/new");
@@ -33,8 +31,6 @@ const Deploy = async ({
 			`https://api.github.com/repos/${user}/${repo}/branches`
 		);
 		const body: ResponseBody = await response.json();
-		// const body = data.body;
-		console.log(body);
 		branches = body.map((item) => {
 			return item.name;
 		});
@@ -51,7 +47,7 @@ const Deploy = async ({
 
 	return (
 		<>
-			<div className="flex  justify-center items-center h-full w-full">
+			<div className="flex-1 flex  justify-center items-center  pt-18">
 				<Card className="w-1/2  p-6 bg-black">
 					{branches && (
 						<>

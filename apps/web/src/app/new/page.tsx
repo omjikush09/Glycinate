@@ -13,7 +13,7 @@ const AddURL = () => {
 		setGitUrl(e.target.value);
 	};
 	return (
-		<div className="flex  justify-center items-center h-full w-full">
+		<div className="flex-1 flex  justify-center items-center">
 			<Card className="w-1/2  p-6 bg-black">
 				<CardContent className="flex flex-col gap-4">
 					<CardTitle className="text-white text-2xl ">
@@ -37,7 +37,10 @@ const AddURL = () => {
 							className="text-white pl-10 invalid:border-red"
 						/>
 					</div>
-					<Button type="button" onClick={()=>redirect(`new/deploy?gitUrl=${gitUrl}`)} >
+					<Button
+						type="button"
+						onClick={() => redirect(`new/deploy?gitUrl=${gitUrl}`)}
+					>
 						Continue
 					</Button>
 				</CardContent>
