@@ -1,5 +1,5 @@
 {
-  "id": "0a5c9806-4d9a-4ab8-a5ff-a8b558c84f25",
+  "id": "4223d9f7-b25d-4fd4-acdd-f036103df953",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -28,6 +28,19 @@
         "project_id": {
           "name": "project_id",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "ecs_build_id": {
+          "name": "ecs_build_id",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         }
@@ -65,19 +78,68 @@
           "name": "name",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
+        },
+        "buildCommand": {
+          "name": "buildCommand",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'npm run build'"
+        },
+        "buildFolder": {
+          "name": "buildFolder",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'dist'"
+        },
+        "sourceFolder": {
+          "name": "sourceFolder",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'./'"
+        },
+        "branch": {
+          "name": "branch",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'main'"
+        },
+        "gitUrl": {
+          "name": "gitUrl",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gitProvider": {
+          "name": "gitProvider",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'GITHUB'"
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "project_name_unique": {
+          "name": "project_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -86,22 +148,11 @@
       "name": "users",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
+        "userId": {
+          "name": "userId",
+          "type": "text",
           "primaryKey": true,
-          "notNull": true,
-          "identity": {
-            "type": "always",
-            "name": "users_id_seq",
-            "schema": "public",
-            "increment": "1",
-            "startWith": "1",
-            "minValue": "1",
-            "maxValue": "2147483647",
-            "cache": "1",
-            "cycle": false
-          }
+          "notNull": true
         }
       },
       "indexes": {},
@@ -113,7 +164,18 @@
       "isRLSEnabled": false
     }
   },
-  "enums": {},
+  "enums": {
+    "public.status": {
+      "name": "status",
+      "schema": "public",
+      "values": [
+        "Queued",
+        "Started",
+        "Failed",
+        "Deployed"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "roles": {},

@@ -1,8 +1,8 @@
-import { integer, pgEnum, pgTable, varchar } from "drizzle-orm/pg-core";
+import { integer, pgEnum, pgTable, varchar, text } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 export const userTable = pgTable("users", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	id: text("userId").primaryKey(),
 });
 export const userRelation = relations(userTable, ({ many }) => ({
 	projects: many(projectTable),
@@ -13,11 +13,11 @@ export const projectTable = pgTable("project", {
 	name: varchar().unique().notNull(),
 	buildCommand: varchar().default("npm run build"),
 	buildFolder: varchar().default("dist").notNull(),
-	sourceFolder: varchar().default("").notNull(),
+	sourceFolder: varchar().default("./").notNull(),
 	branch: varchar().notNull().default("main"),
 	gitUrl: varchar().notNull(),
 	gitProvider: varchar().default("GITHUB"),
-	userId: integer("user_id"),
+	userId: text("user_id").notNull(),
 });
 
 export const projectRelation = relations(projectTable, ({ one, many }) => ({
@@ -39,6 +39,7 @@ export const deployMentTable = pgTable("deployment_table", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
 	projectId: integer("project_id"),
 	status: deployEnum(),
+	ecsBuildId:varchar("ecs_build_id")
 });
 
 export const deploymentRelation = relations(deployMentTable, ({ one }) => ({

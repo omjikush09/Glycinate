@@ -4,6 +4,7 @@
 	"description": "",
 	"type": "module",
 	"main": "index.js",
+	"access": "public",
 	"scripts": {
 		"dev": "tsc --watch",
 		"build": "tsc"
@@ -13,12 +14,16 @@
 	"license": "ISC",
 	"exports": {
 		"./index": {
-			"types": "./src/index.ts",
-			"default": "./dist/index.js"
+			"types": "./src/index.ts",     
+			"default": "./dist/src/index.js"
 		},
 		"./schema": {
 			"types": "./src/schema.ts",
-			"default": "./dist/schema.js"
+			"default": "./dist/src/schema.js"
+		},
+		"./orm": {
+			"types": "./src/orm.ts",
+			"default": "./dist/src/orm.js"
 		}
 	},
 	"dependencies": {
