@@ -12,7 +12,7 @@ export default async function Project({
 				<div className="text-white ">project details--</div>
 				<Link
 					className="text-white cursor-pointer"
-					href={`https://${project}`}
+					href={`https://${project}.glycinate.in`}
 					target="_blank"
 				>
 					{" "}

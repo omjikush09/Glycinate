@@ -44,7 +44,7 @@ export const handler = async (event: APIGatewayEvent) => {
 	if (!body || !userId) {
 		return {
 			statusCode: 400,
-			message: "No body found",
+			body: "No body found",
 		};
 	}
 
@@ -60,7 +60,7 @@ export const handler = async (event: APIGatewayEvent) => {
 	) {
 		return {
 			statusCode: 400,
-			message: "Missing required fields",
+			body: "Missing required fields",
 		};
 	}
 	let project;
@@ -77,17 +77,23 @@ export const handler = async (event: APIGatewayEvent) => {
 				sourceFolder: bodyParsed.baseDirectory,
 				userId: userId,
 			})
-			.returning({ projectId: projectTable.id });
+			.returning({
+				projectId: projectTable.id,
+				projectName: projectTable.name,
+			});
 	} catch (error) {
 		console.error(error);
 		return {
 			statusCode: 400,
-			message: "Something went wrong",
+			body: {
+				error:
+					"Something is wrong with the data. try changing the project name",
+			},
 		};
 	}
-
+	let deploymentStatusUpdate;
 	try {
-		const deploymentStatusUpdate = await db
+		deploymentStatusUpdate = await db
 			.insert(deployMentTable)
 			.values({
 				projectId: project[0]?.projectId,
@@ -116,12 +122,15 @@ export const handler = async (event: APIGatewayEvent) => {
 		console.error("Error" + error);
 		return {
 			statusCode: 400,
-			message: "Someting went wrong",
+			body: {error:"Someting went wrong"},
 		};
 	}
 
 	return {
 		statusCode: 200,
-		message: "Started building...",
+		body: {
+			projectName: project[0]?.projectName,
+			deployMentId: deploymentStatusUpdate[0]?.deploymentId,
+		},
 	};
 };
