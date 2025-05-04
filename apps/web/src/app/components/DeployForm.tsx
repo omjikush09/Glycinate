@@ -24,6 +24,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
 
 export const projctFormSchema = z.object({
 	gitUrl: z.string(),
@@ -49,6 +50,7 @@ export default function DeployForm({
 	branches: string[];
 }) {
 	const { session } = useSession();
+	const router = useRouter();
 	const form = useForm<z.infer<typeof projctFormSchema>>({
 		resolver: zodResolver(projctFormSchema),
 		defaultValues: {
@@ -65,7 +67,7 @@ export default function DeployForm({
 	async function onSubmit(values: z.infer<typeof projctFormSchema>) {
 		const authToken = await session?.getToken();
 		console.log(authToken);
-		toast("on cli");
+		toast("About to start the Deployment...");
 
 		try {
 			const response = await fetch(
@@ -75,7 +77,6 @@ export default function DeployForm({
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: `Bearer ${authToken}`,
-						"Access-control-request-headers": "*",
 					},
 					body: JSON.stringify({
 						projectId: "df",
@@ -84,15 +85,20 @@ export default function DeployForm({
 					}),
 				}
 			);
+			const data: { projectName: string; deployMentId: string } =
+				await response.json();
 			console.log(response);
 			if (response.status == 200) {
-				toast.success("Build started");
+				toast.success("Build started....");
+				router.push(
+					`/dashboard/project/${data.projectName}/deployments/${data.deployMentId}/logs`
+				);
 			} else {
-				toast.error("Failed to Start the build");
+				toast.error("Failed to Start the build..");
 			}
 		} catch (error: unknown) {
 			console.error(error);
-			toast(String(error));
+			toast.error(String(error));
 		}
 
 		console.log("df");

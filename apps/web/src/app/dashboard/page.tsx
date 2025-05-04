@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@repo/db/index";
 import { eq } from "@repo/db/orm";
 import { projectTable } from "@repo/db/schema";
+import Link from "next/link";
 
 export default async function Dashboard() {
 	const { userId } = await auth();
@@ -29,7 +30,11 @@ export default async function Dashboard() {
 									key={project.projectName}
 									className="border p-2 w-[400px] h-[200px] rounded-2xl flex flex-col justify-around items-center  flex-wrap"
 								>
-									<h1 className="text-4xl text-white">{project.projectName}</h1>
+									<Link href={`dashboard/project/${project.projectName}`}>
+										<h1 className="text-4xl text-white cursor-pointer ">
+											{project.projectName}
+										</h1>
+									</Link>
 									<p className="text-white text-1xl truncate">
 										{project.gitUrl}
 									</p>
