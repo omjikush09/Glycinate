@@ -17,7 +17,7 @@
     "next-env.d.ts",
     "next.config.js",
     ".next/types/**/*.ts"
-  ],
+, "src/app/dashboard/loading.tsx"  ],
   "exclude": [
     "node_modules"
   ],

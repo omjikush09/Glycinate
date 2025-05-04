@@ -1,16 +1,7 @@
 import { getBranches, getGitProvider } from "@/utils/git";
 import { Card } from "@/components/ui/card";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 import { redirect } from "next/navigation";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import DeployForm from "@/app/componets/deployForm";
+import DeployForm from "@/app/components/DeployForm";
 
 const Deploy = async ({
 	searchParams,

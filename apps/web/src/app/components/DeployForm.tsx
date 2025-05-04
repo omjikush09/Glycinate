@@ -2,6 +2,9 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSession } from "@clerk/nextjs";
+import { toast } from "sonner";
+
 import { z } from "zod";
 import {
 	Form,
@@ -21,8 +24,10 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { db } from "@repo/db/index";
+import { userTable } from "@repo/db/schema";
 
-const formSchema = z.object({
+export const projctFormSchema = z.object({
 	gitUrl: z.string(),
 	buildFolder: z.string().min(1),
 	buildCommand: z.string().min(1),
@@ -34,7 +39,7 @@ const formSchema = z.object({
 			message: "Only letters, numbers, and hyphens are allowed",
 		})
 		.transform((val: string) => val.toLowerCase()),
-	provider: z.enum(["GITHUB"]),
+	// provider: z.enum(["GITHUB"]),
 	branch: z.string().min(1),
 });
 
@@ -47,26 +52,61 @@ export default function DeployForm({
 	provider: string;
 	branches: string[];
 }) {
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
+	const { session } = useSession();
+	const form = useForm<z.infer<typeof projctFormSchema>>({
+		resolver: zodResolver(projctFormSchema),
 		defaultValues: {
 			projectName: "",
 			gitUrl: gitUrl,
-			baseDirectory: "",
-			buildFolder: "dist",
+			baseDirectory: "./",
+			buildFolder: "./dist",
 			buildCommand: "npm run build",
-			provider: "GITHUB",
+			// provider: "GITHUB",
 			branch: branches[0],
 		},
 	});
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	async function onSubmit(values: z.infer<typeof projctFormSchema>) {
+		const authToken = await session?.getToken();
+		console.log(authToken);
+		toast("on cli");
+
+		try {
+			const response = await fetch(
+				"https://5nheiorlg8.execute-api.us-east-1.amazonaws.com/add_to_queue",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${authToken}`,
+						"Access-control-request-headers": "*",
+					},
+					body: JSON.stringify({
+						projectId: "df",
+						provider: "GITHUB",
+						...values,
+					}),
+				}
+			);
+			console.log(response);
+			if (response.status == 200) {
+				toast.success("Build started");
+			} else {
+				toast.error("Failed to Start the build")
+			}
+		} catch (error: unknown) {
+			console.error(error);
+			toast(String(error));
+		}
+
+		console.log("df");
 		console.log(values);
 	}
 
 	return (
 		<div className="text-white w-2/3 ">
 			<Form {...form}>
+				{JSON.stringify(form.formState)}
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 ">
 					<FormField
 						control={form.control}
@@ -94,6 +134,23 @@ export default function DeployForm({
 									/>
 								</FormControl>
 								<FormDescription>Example: dist, public</FormDescription>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name="baseDirectory"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Source Folder</FormLabel>
+								<FormControl>
+									<Input
+										placeholder="Enter the path of source folder"
+										{...field}
+									/>
+								</FormControl>
+								<FormDescription>Example: . , ./frotend</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
@@ -147,7 +204,9 @@ export default function DeployForm({
 							</FormItem>
 						)}
 					/>
-					<Button className="w-full bg-blue-800" type="submit">Deploy</Button>
+					<Button className="w-full bg-blue-800" type="submit">
+						Deploy
+					</Button>
 				</form>
 			</Form>
 		</div>
