@@ -1,23 +1,26 @@
 {
-  "name": "start-ecs",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node build.mjs"
-  },
-  "author": "omji",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "@types/aws-lambda": "^8.10.149",
-    "@types/node": "^22.14.1",
-    "esbuild": "^0.25.2",
-    "typescript": "^5.8.3"
-  },
-  "dependencies": {
-    "@aws-sdk/client-ecs": "^3.787.0",
-    "@aws-sdk/client-s3": "^3.787.0",
-    "@aws-sdk/s3-request-presigner": "^3.787.0"
-  }
+	"name": "start-ecs",
+	"version": "1.0.0",
+	"main": "index.ts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "node build.mjs"
+	},
+	"author": "omji",
+	"license": "ISC",
+	"description": "",
+	"devDependencies": {
+		"@types/aws-lambda": "^8.10.149",
+		"@types/node": "^22.14.1",
+		"esbuild": "^0.25.2",
+		"typescript": "^5.8.3",
+		"@repo/typescript-config": "workspace:*"
+	},
+	"dependencies": {
+		"@aws-sdk/client-ecs": "^3.787.0",
+		"@aws-sdk/client-s3": "^3.787.0",
+		"@aws-sdk/s3-request-presigner": "^3.787.0",
+		"@repo/db": "workspace:*",
+		"start-ecs": "link:"
+	}
 }

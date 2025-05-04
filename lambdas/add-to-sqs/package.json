@@ -13,9 +13,12 @@
 		"@types/aws-lambda": "^8.10.149",
 		"@types/node": "^22.14.0",
 		"esbuild": "^0.25.2",
-		"typescript": "^5.8.3"
+		"typescript": "^5.8.3",
+		"@repo/typescript-config": "workspace:*"
 	},
 	"dependencies": {
-		"@aws-sdk/client-sqs": "^3.787.0"
+		"@aws-sdk/client-sqs": "^3.787.0",
+		"@repo/db": "workspace:*",
+		"deploy": "link:"
 	}
 }

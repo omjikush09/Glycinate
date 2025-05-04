@@ -6,10 +6,12 @@ import {
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { SQSEvent } from "aws-lambda";
-
+import { db } from "@repo/db/index";
+import { deployMentTable } from "@repo/db/schema";
+import { eq } from "@repo/db/orm";
 type provider = "GITHUB";
 
-type DeployEvent = {
+type DeployMentEvent = {
 	gitUrl: string;
 	branch: string;
 	provider: provider;
@@ -17,21 +19,23 @@ type DeployEvent = {
 	projectId: string;
 	env?: Record<string, string>;
 	buildCommand: string;
+	deploymentId: string;
 };
 
 export const handler = async (event: SQSEvent) => {
 	console.log(event);
-	const message: DeployEvent = JSON.parse(event.Records[0].body);
+	if(event?.Records[0]===undefined) return;
+	const message: DeployMentEvent = JSON.parse(event.Records[0].body);
 	const config = {
 		region: "us-east-1",
 	};
 	const s3Client = new S3Client(config);
 	const command = new PutObjectCommand({
 		Bucket: process.env.AWS_BUCKET,
-		Key: `${message.projectName}.zip`,
+		Key: `${message?.projectName}-${message.deploymentId}.zip`,
 		ContentType: "application/zip",
 	});
-	console.log(JSON.stringify(command));
+	console.log(JSON.stringify(message));
 	let preSignedURL = "";
 	try {
 		preSignedURL = await getSignedUrl(s3Client, command, {
@@ -56,7 +60,6 @@ export const handler = async (event: SQSEvent) => {
 		capacityProviderStrategy: [
 			{
 				capacityProvider: "FARGATE_SPOT",
-		
 			},
 		],
 		overrides: {
@@ -94,6 +97,11 @@ export const handler = async (event: SQSEvent) => {
 	try {
 		const responseRunTask = await ecsClinet.send(taskRunCommand);
 		console.log("RespnseRunTask " + JSON.stringify(responseRunTask));
+		const deploymentDbUpdate = await db
+			.update(deployMentTable)
+			.set({ status: "Started" })
+			.where(eq(deployMentTable.id, Number(message.deploymentId)));
+		console.log("DeploymentUpdate " + deploymentDbUpdate);
 	} catch (error) {
 		throw error;
 	}

@@ -1,26 +1,29 @@
 {
-  "name": "unzip-output",
-  "version": "1.0.0",
-  "main": "dist/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node build.mjs"
-  },
-  "author": "omji",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "@types/aws-lambda": "^8.10.149",
-    "@types/mime-types": "^2.1.4",
-    "@types/node": "^22.14.1",
-    "@types/unzipper": "^0.10.11",
-    "esbuild": "^0.25.2",
-    "typescript": "^5.8.3"
-  },
-  "dependencies": {
-    "@aws-sdk/client-s3": "^3.787.0",
-    "@aws-sdk/lib-storage": "^3.787.0",
-    "mime-types": "^3.0.1",
-    "unzipper": "^0.12.3"
-  }
+	"name": "unzip-output",
+	"version": "1.0.0",
+	"main": "dist/index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "node build.mjs"
+	},
+	"author": "omji",
+	"license": "ISC",
+	"description": "",
+	"devDependencies": {
+		"@types/aws-lambda": "^8.10.149",
+		"@types/mime-types": "^2.1.4",
+		"@types/node": "^22.14.1",
+		"@types/unzipper": "^0.10.11",
+		"esbuild": "^0.25.2",
+		"typescript": "^5.8.3",
+		"@repo/typescript-config": "workspace:*"
+	},
+	"dependencies": {
+		"@aws-sdk/client-s3": "^3.787.0",
+		"@aws-sdk/lib-storage": "^3.787.0",
+		"@repo/db": "workspace:*",
+		"mime-types": "^3.0.1",
+		"unzip-output": "link:",
+		"unzipper": "^0.12.3"
+	}
 }

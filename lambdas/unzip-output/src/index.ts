@@ -9,24 +9,32 @@ import { Readable } from "node:stream";
 import unzipper from "unzipper";
 import mime from "mime-types";
 import { Upload } from "@aws-sdk/lib-storage";
+import { db } from "@repo/db/index";
+import { deployMentTable } from "@repo/db/schema";
+import { eq } from "@repo/db/orm";
 
 const client = new S3Client({
 	region: process.env.AWS_REGION ?? "us-east-1",
 });
 
-const AWS_BUCKET_FINAL_NAME =
-    process.env.AWS_BUCKET_FINAL_NAME ?? "" ;
+const AWS_BUCKET_FINAL_NAME = process.env.AWS_BUCKET_FINAL_NAME ?? "";
 
 export const handler = async (event: S3Event): Promise<void> => {
 	console.log("Received event:", JSON.stringify(event, null, 2));
+	if (event.Records[0] === undefined) return;
 	console.log("Processing file:", event.Records[0].s3.object.key);
 
-	const bucket = event.Records[0].s3.bucket.name;
+	const bucket = event.Records[0]?.s3.bucket.name;
 	const key = decodeURIComponent(
-		event.Records[0].s3.object.key.replace(/\+/g, " ")
+		event?.Records[0].s3.object.key.replace(/\+/g, " ")
 	);
-	const zipPrefix = key.replace(/\.zip$/, "");
-
+	// remove zip and get project Name it would be like:-  test-343.zip
+	console.log(key)
+	const KeyWithoutZip = key.replace(/\.zip$/, "");
+	const parts = KeyWithoutZip.split("-");
+	const deploymentId = parts.pop();
+	const projectName = parts.join("-")
+	console.log(deploymentId+" Deployment Id")
 	try {
 		// Get the zip file from S3
 		const input: GetObjectCommandInput = { Bucket: bucket, Key: key };
@@ -37,7 +45,9 @@ export const handler = async (event: S3Event): Promise<void> => {
 		if (!webStream) throw new Error("No WebStream found for zip");
 
 		// Convert web stream to node stream
-		const nodeStream = Readable.from(webStream);
+		const nodeStream = Readable.from(
+			webStream as unknown as Iterable<any> | AsyncIterable<any>
+		);
 
 		// Wrap stream processing in a promise to ensure Lambda waits for completion
 		return new Promise((resolve, reject) => {
@@ -52,7 +62,7 @@ export const handler = async (event: S3Event): Promise<void> => {
 					if (type === "File") {
 						console.log(`Processing file: ${fileName}`);
 
-						const targetKey = `${zipPrefix}/${fileName}`;
+						const targetKey = `${projectName}/${fileName}`;
 						const contentType =
 							mime.lookup(fileName) || "application/octet-stream";
 
@@ -66,7 +76,7 @@ export const handler = async (event: S3Event): Promise<void> => {
 								const upload = new Upload({
 									client,
 									params: {
-										Bucket: AWS_BUCKET_FINAL_NAME, 
+										Bucket: AWS_BUCKET_FINAL_NAME,
 										Key: targetKey,
 										Body: entry, // Stream the file directly to S3
 										ContentType: contentType,
@@ -110,7 +120,16 @@ export const handler = async (event: S3Event): Promise<void> => {
 						} catch (err) {
 							console.error("❌ Failed to delete original zip:", err);
 						}
-
+						try {
+							// Update the DB for status
+							const deploymentDbUpdate = await db
+								.update(deployMentTable)
+								.set({ status: "Deployed" })
+								.where(eq(deployMentTable.id, Number(deploymentId)));
+						} catch (error) {
+							console.error("Failed to Update the status in DB");
+							reject();
+						}
 						// Resolve the promise to signal Lambda completion
 						resolve();
 					} catch (err) {
