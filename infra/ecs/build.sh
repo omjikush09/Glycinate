@@ -14,7 +14,7 @@ echo "[*] Checking out branch: $GIT_BRANCH"
 git checkout "$GIT_BRANCH" || { echo "❌ Failed to checkout branch $GIT_BRANCH"; exit 1; }
 
 # Install dependencies using the command provided in the environment variable
-CD $BASE_FOLDER
+cd $BASE_FOLDER
 echo "[*] Installing dependencies with: $INSTALL_CMD"
 eval "$INSTALL_CMD" || { echo "❌ Dependency installation failed"; exit 1; }
 

@@ -28,6 +28,7 @@ module "lambda" {
   AWS_BUCKET_ARN              = module.s3.S3_BUCKET_ARN
   AWS_BUCKET_FINAL_ARN        = module.s3.s3_bucket_final_arn
   AWS_BUCKET_FINAL_NAME       = var.AWS_BUCKET_FINAL_NAME
+  DATABASE_URL                = var.DATABASE_URL
 }
 
 module "iam" {
@@ -69,5 +70,9 @@ variable "AWS_BUCKET" {
 }
 
 variable "AWS_BUCKET_FINAL_NAME" {
+  type = string
+}
+
+variable "DATABASE_URL" {
   type = string
 }

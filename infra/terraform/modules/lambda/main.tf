@@ -34,6 +34,9 @@ resource "aws_lambda_function" "trigger_ecs_lambda" {
   handler       = "index.handler"
   runtime       = "nodejs20.x"
 
+  timeout     = 5
+  memory_size = 256
+
 
   environment {
     variables = {
@@ -41,7 +44,8 @@ resource "aws_lambda_function" "trigger_ecs_lambda" {
       CLUSTER_NAME           = var.glycinate_cluster_name,
       AWS_BUCKET             = var.aws_bucket,
       DEFAULT_SECURITY_GROUP = data.aws_security_group.default.id,
-      DEFAULT_SUBNET         = data.aws_subnets.default.ids[0]
+      DEFAULT_SUBNET         = data.aws_subnets.default.ids[0],
+      DATABASE_URL           = var.DATABASE_URL
     }
   }
 }
@@ -73,9 +77,13 @@ resource "aws_lambda_function" "add_to_queue" {
   handler       = "index.handler"
   runtime       = "nodejs20.x"
 
+  timeout     = 15
+  memory_size = 256
+
   environment {
     variables = {
-      SQS_QUEUE_URL = var.sqs_url
+      SQS_QUEUE_URL = var.sqs_url,
+      DATABASE_URL  = var.DATABASE_URL
     }
   }
 }
@@ -96,9 +104,14 @@ resource "aws_lambda_function" "unzip_lambda" {
   runtime       = "nodejs20.x"
   filename      = "${path.module}/lambda_unzip_function_payload.zip"
 
+  timeout     = 10
+  memory_size = 256
+
+
   environment {
     variables = {
-      AWS_BUCKET_FINAL_NAME = var.AWS_BUCKET_FINAL_NAME
+      AWS_BUCKET_FINAL_NAME = var.AWS_BUCKET_FINAL_NAME,
+      DATABASE_URL          = var.DATABASE_URL
     }
   }
 }

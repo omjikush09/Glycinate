@@ -5,18 +5,22 @@ source .env
 set +a
 
 
-
+npm i -g pnpm@10.10.0
+cd ../
+pnpm i -g turbo@2.4.4
+turbo run build --filter=@repo/db
+cd ./infra
 cd ../lambdas/add-to-sqs
-npm i
-npm run build
+pnpm add .
+pnpm run build
 
 cd ../start-ecs
-npm i
-npm run build
+pnpm add .
+pnpm run build
 
 cd ../unzip-output
-npm i
-npm run build
+pnpm add .
+pnpm run build
 
 cd ../../infra/terraform
 

@@ -41,3 +41,6 @@ variable "AWS_BUCKET_FINAL_ARN" {
 variable "AWS_BUCKET_FINAL_NAME" {
   type = string
 }
+variable "DATABASE_URL" {
+  type = string
+}
