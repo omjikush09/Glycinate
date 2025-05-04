@@ -1,9 +1,9 @@
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
-import { NextApiRequest } from "next";
 import { db } from "@repo/db/index";
 import { userTable } from "@repo/db/schema";
+import { NextRequest } from "next/server";
 
-export async function POST(req: NextApiRequest) {
+export async function POST(req: NextRequest) {
 	try {
 		const evt = await verifyWebhook(req);
 
