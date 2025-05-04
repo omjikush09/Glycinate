@@ -24,8 +24,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { db } from "@repo/db/index";
-import { userTable } from "@repo/db/schema";
 
 export const projctFormSchema = z.object({
 	gitUrl: z.string(),
@@ -45,11 +43,9 @@ export const projctFormSchema = z.object({
 
 export default function DeployForm({
 	gitUrl,
-	provider,
 	branches,
 }: {
 	gitUrl: string;
-	provider: string;
 	branches: string[];
 }) {
 	const { session } = useSession();
@@ -92,7 +88,7 @@ export default function DeployForm({
 			if (response.status == 200) {
 				toast.success("Build started");
 			} else {
-				toast.error("Failed to Start the build")
+				toast.error("Failed to Start the build");
 			}
 		} catch (error: unknown) {
 			console.error(error);
@@ -106,7 +102,6 @@ export default function DeployForm({
 	return (
 		<div className="text-white w-2/3 ">
 			<Form {...form}>
-				{JSON.stringify(form.formState)}
 				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 ">
 					<FormField
 						control={form.control}

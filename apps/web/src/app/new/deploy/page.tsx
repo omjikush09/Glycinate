@@ -1,7 +1,16 @@
-import { getBranches, getGitProvider } from "@/utils/git";
+
 import { Card } from "@/components/ui/card";
 import { redirect } from "next/navigation";
 import DeployForm from "@/app/components/DeployForm";
+
+type ResponseBody = {
+	name: string;
+	commit: {
+		sha: string;
+		url: string;
+	};
+	protected: boolean;
+}[];
 
 const Deploy = async ({
 	searchParams,
@@ -13,30 +22,45 @@ const Deploy = async ({
 	if (!repoUrl) {
 		redirect("/new");
 	}
-	const { branches, error } = await getBranches(repoUrl);
-	const { provider, error: errorGitProvider } = await getGitProvider(repoUrl);
+
+	const url = repoUrl.replace(/\.git$/, "");
+	const urlParts = url.split("/");
+	const repo = urlParts[urlParts.length - 1];
+	const user = urlParts[urlParts.length - 2];
+	let branches = [];
+	try {
+		const response = await fetch(
+			`https://api.github.com/repos/${user}/${repo}/branches`
+		);
+		const body: ResponseBody = await response.json();
+		// const body = data.body;
+		console.log(body);
+		branches = body.map((item) => {
+			return item.name;
+		});
+	} catch (error) {
+		console.log(error);
+		return (
+			<>
+				<h1 className="text-white">Failed Not able to fetch branches</h1>
+			</>
+		);
+	}
+
+	// const { branches, error } = await getBranches(repoUrl);
+
 	return (
 		<>
 			<div className="flex  justify-center items-center h-full w-full">
 				<Card className="w-1/2  p-6 bg-black">
-					{!errorGitProvider && error && (
-						<p className="text-red-500">{error}</p>
-					)}
-					{errorGitProvider && (
-						<p className="text-red-500">Git Provider not Supported </p>
-					)}
-					{!error && provider && branches && (
+					{branches && (
 						<>
 							<p className="text-white">Git URL - {repoUrl}</p>
-							<div className="flex justify-between  items-center gap-4">
+							{/* <div className="flex justify-between  items-center gap-4">
 								<p className="text-white text-2xl ">Provider - {provider}</p>
-							</div>
+							</div> */}
 							<div className="flex justify-center items-center">
-								<DeployForm
-									gitUrl={repoUrl}
-									provider={provider}
-									branches={branches}
-								/>
+								<DeployForm gitUrl={repoUrl} branches={branches} />
 							</div>
 						</>
 					)}
