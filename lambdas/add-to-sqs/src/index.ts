@@ -40,15 +40,32 @@ export const handler = async (event: APIGatewayEvent) => {
 	console.log("Received event:", JSON.stringify(event, null, 2));
 	const userId = event.requestContext.authorizer?.jwt?.claims?.sub;
 	const body = event.body;
+	// console.log("THIS IS BODY+ " + body);
 
-	if (!body || !userId) {
+	if (!body ) {
+		console.log("Missing body log");
 		return {
 			statusCode: 400,
-			body: "No body found",
+			body: JSON.stringify("No body found"),
+		};
+	}
+	if ( !userId) {
+		console.log("Missing userID log" + userId);
+		return {
+			statusCode: 400,
+			body: JSON.stringify("No user Id found"),
 		};
 	}
 
-	const bodyParsed: DeployEvent = JSON.parse(body);
+	let bodyParsed: DeployEvent;
+	try {
+		bodyParsed = JSON.parse(body);
+	} catch (e) {
+		return {
+			statusCode: 400,
+			body: JSON.stringify({ error: "Invalid JSON body" }),
+		};
+	}
 
 	if (
 		!bodyParsed?.gitUrl ||
@@ -60,7 +77,7 @@ export const handler = async (event: APIGatewayEvent) => {
 	) {
 		return {
 			statusCode: 400,
-			body: "Missing required fields",
+			body: JSON.stringify("Missing required fields"),
 		};
 	}
 	let project;
@@ -85,10 +102,10 @@ export const handler = async (event: APIGatewayEvent) => {
 		console.error(error);
 		return {
 			statusCode: 400,
-			body: {
+			body: JSON.stringify({
 				error:
 					"Something is wrong with the data. try changing the project name",
-			},
+			}),
 		};
 	}
 	let deploymentStatusUpdate;
@@ -122,15 +139,15 @@ export const handler = async (event: APIGatewayEvent) => {
 		console.error("Error" + error);
 		return {
 			statusCode: 400,
-			body: {error:"Someting went wrong"},
+			body: JSON.stringify({ error: "Someting went wrong" }),
 		};
 	}
 
 	return {
 		statusCode: 200,
-		body: {
+		body: JSON.stringify({
 			projectName: project[0]?.projectName,
 			deployMentId: deploymentStatusUpdate[0]?.deploymentId,
-		},
+		}),
 	};
 };
