@@ -14,7 +14,12 @@ export default function DeployMentStatus({
 }) {
 	const localStorageKey = `DeploymentId-${deploymentId}`;
 	const [currentStatus, setCurrentStatus] = useState<
-		"Deployed" | "Queued" | "Started" | "Failed" | "Loading.."
+		| "Deployed"
+		| "Queued"
+		| "Started"
+		| "Failed"
+		| "Loading.."
+		| "Failed to Fetch"
 	>(
 		(localStorage.getItem(localStorageKey) as "Deployed" | "Failed") ??
 			"Loading.."
@@ -23,16 +28,12 @@ export default function DeployMentStatus({
 	const intervalRef = useRef<NodeJS.Timeout>(null);
 
 	useEffect(() => {
-		if (currentStatus !== "Loading..") return;
+		if (currentStatus !== "Loading.." && currentStatus !== "Failed to Fetch")
+			return;
 		const getData = async () => {
 			attempRef.current += 1;
 			try {
-				const nodeEnv = process.env.NODE_ENV;
-				const data = await fetch(
-					nodeEnv === "development"
-						? `http://localhost:3000/api/status/${deploymentId}`
-						: `https://www.glycinate.in/api/status/${deploymentId}`
-				);
+				const data = await fetch(`/api/status/${deploymentId}`);
 				const body: {
 					status: "Deployed" | "Queued" | "Started" | "Failed";
 				} = await data.json();
@@ -59,7 +60,7 @@ export default function DeployMentStatus({
 				}
 			} catch (error) {
 				console.error(error);
-				setCurrentStatus("Failed");
+				setCurrentStatus("Failed to Fetch");
 			}
 		};
 

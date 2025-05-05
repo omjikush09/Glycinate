@@ -69,20 +69,15 @@ export default function DeployForm({
 	useEffect(() => {
 		const delayDebounce = setTimeout(async () => {
 			if (projectName) {
-				const nodeEnv = process.env.NODE_ENV;
 				try {
-					const data = await fetch(
-						nodeEnv === "development"
-							? `http://localhost:3000/api/checkprojectname/${projectName}`
-							: `https://www.glycinate.in/api/checkprojectname/${projectName}`
-					);
+					const data = await fetch(`/api/checkprojectname/${projectName}`);
 					if (data.status != 200) {
 						form.setError("projectName", {
 							type: "validate",
 							message: "Project Name is already taken. Try other",
 						});
-					}else{
-						form.clearErrors("projectName")
+					} else {
+						form.clearErrors("projectName");
 					}
 				} catch (error) {
 					console.error(error);
@@ -91,7 +86,6 @@ export default function DeployForm({
 		}, 100);
 		return () => clearTimeout(delayDebounce);
 	}, [projectName]);
-
 
 	async function onSubmit(values: z.infer<typeof projctFormSchema>) {
 		const authToken = await session?.getToken();
