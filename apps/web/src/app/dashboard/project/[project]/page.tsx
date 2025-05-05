@@ -15,8 +15,7 @@ export default async function Project({
 					href={`https://${project}.glycinate.in`}
 					target="_blank"
 				>
-					{" "}
-					Open Project{" "}
+					{`https://${project}.glycinate.in`}
 				</Link>
 			</div>
 		</>
