@@ -26,19 +26,20 @@ export default async function Dashboard() {
 					{response &&
 						response.map((project) => {
 							return (
-								<div
+								<Link
 									key={project.projectName}
-									className="border p-2 w-[400px] h-[200px] rounded-2xl flex flex-col justify-around items-center  flex-wrap"
+									href={`dashboard/project/${project.projectName}`}
 								>
-									<Link href={`dashboard/project/${project.projectName}`}>
+									<div className="p-2 w-[400px] h-[200px] rounded-2xl flex flex-col justify-around items-center  flex-wrap ring-2 ring-blue-500/50 bg-slate-900 shadow-xl shadow-amber-800/50">
 										<h1 className="text-4xl text-white cursor-pointer ">
 											{project.projectName}
 										</h1>
-									</Link>
-									<p className="text-white text-1xl truncate">
-										{project.gitUrl}
-									</p>
-								</div>
+
+										<p className="text-white text-1xl truncate">
+											{project.gitUrl}
+										</p>
+									</div>
+								</Link>
 							);
 						})}
 				</div>

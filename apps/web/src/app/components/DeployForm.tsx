@@ -118,7 +118,7 @@ export default function DeployForm({
 								<FormControl>
 									<Input placeholder="project Name" {...field} />
 								</FormControl>
-								<FormMessage />
+								<FormMessage className="text-white" />
 							</FormItem>
 						)}
 					/>

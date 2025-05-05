@@ -1,20 +1,31 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import DeployedLink from "./DeployedLink";
 
 const maxAttenmpts = 15;
 
 export default function DeployMentStatus({
 	deploymentId,
+	project,
 }: {
 	deploymentId: number;
+	project: string;
 }) {
-	const [currentStatus, setCurrentStatus] = useState("Loading..");
+	const localStorageKey = `DeploymentId-${deploymentId}`;
+	const [currentStatus, setCurrentStatus] = useState<
+		"Deployed" | "Queued" | "Started" | "Failed" | "Loading.."
+	>(
+		(localStorage.getItem(localStorageKey) as "Deployed" | "Failed") ??
+			"Loading.."
+	);
 	const attempRef = useRef(0);
 	const intervalRef = useRef<NodeJS.Timeout>(null);
 
 	useEffect(() => {
+		if (currentStatus !== "Loading..") return;
 		const getData = async () => {
+			attempRef.current += 1;
 			try {
 				const nodeEnv = process.env.NODE_ENV;
 				const data = await fetch(
@@ -35,10 +46,20 @@ export default function DeployMentStatus({
 					if (intervalRef.current !== null) {
 						clearInterval(intervalRef.current);
 					}
+					localStorage.setItem(`DeploymentId-${deploymentId}`, body.status);
+				}
+				if (body.status == "Started") {
+					if (intervalRef.current !== null) {
+						clearInterval(intervalRef.current);
+					}
+					intervalRef.current = setInterval(
+						getData,
+						Math.max(2000 * attempRef.current, 2000)
+					);
 				}
 			} catch (error) {
 				console.error(error);
-				setCurrentStatus("Failed to fetch status");
+				setCurrentStatus("Failed");
 			}
 		};
 
@@ -53,7 +74,8 @@ export default function DeployMentStatus({
 
 	return (
 		<>
-			<div className="text-white">Status -- {currentStatus}</div>
+			<div className="text-white my-10">Status -- {currentStatus}</div>
+			{currentStatus == "Deployed" && <DeployedLink project={project} />}
 		</>
 	);
 }

@@ -2,6 +2,8 @@ import { db } from "@repo/db/index";
 import { deployMentTable, projectTable } from "@repo/db/schema";
 import { eq } from "@repo/db/orm";
 import Link from "next/link";
+import { SquareArrowOutUpRight } from "lucide-react";
+import DeployedLink from "@/app/components/DeployedLink";
 
 export default async function Deployments({
 	params,
@@ -19,18 +21,27 @@ export default async function Deployments({
 		.where(eq(projectTable.name, project));
 
 	return (
-		<div className="flex-1 flex items-center flex-col text-white gap-2">
-			Deployments of project {deployments[0]?.projectName}
-			<div className="text-white p-4">
+		<div className="flex-1 flex items-center flex-col text-zinc-400 gap-2 mt-8">
+			Deployments of project- {deployments[0]?.projectName}
+			<DeployedLink project={project} />
+			<div className="p-4 w-full ">
 				{deployments.map((deployment) => {
 					return (
-						<Link
-                        href={`/dashboard/project/${deployments[0]?.projectName}/deployments/${deployment?.DeploymentId}/logs`}
-							className="text-white border rounded-2xl cursor-pointer px-10 py-2 bg-blue-600"
+						<div
+							className="w-1/2 max-w-[800] shadow-sm shadow-amber-800/50 m-auto py-4 px-8 rounded-sm bg-linear-to-r from-black to-gray-900 "
 							key={deployment?.DeploymentId}
 						>
-							{deployment.DeploymentId}
-						</Link>
+							<div className="flex justify-between">
+								<h1>Deployment ID - {deployment.DeploymentId}</h1>
+								<Link
+									href={`/dashboard/project/${deployments[0]?.projectName}/deployments/${deployment?.DeploymentId}/logs`}
+								>
+									<h1 className="cursor-pointer px-8 py-2 bg-amber-800 rounded ">
+										Logs
+									</h1>
+								</Link>
+							</div>
+						</div>
 					);
 				})}
 			</div>

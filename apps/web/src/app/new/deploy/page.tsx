@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { redirect } from "next/navigation";
 import DeployForm from "@/app/components/DeployForm";
+import { ClerkProvider } from "@clerk/nextjs";
 
 type ResponseBody = {
 	name: string;
@@ -47,21 +48,23 @@ const Deploy = async ({
 
 	return (
 		<>
-			<div className="flex-1 flex  justify-center items-center  pt-18">
-				<Card className="w-1/2  p-6 bg-black">
-					{branches && (
-						<>
-							<p className="text-white">Git URL - {repoUrl}</p>
-							{/* <div className="flex justify-between  items-center gap-4">
+			<ClerkProvider>
+				<div className="flex-1 flex  justify-center items-center  pt-18">
+					<Card className="w-1/2  p-6 bg-black">
+						{branches && (
+							<>
+								<p className="text-white">Git URL - {repoUrl}</p>
+								{/* <div className="flex justify-between  items-center gap-4">
 								<p className="text-white text-2xl ">Provider - {provider}</p>
 							</div> */}
-							<div className="flex justify-center items-center">
-								<DeployForm gitUrl={repoUrl} branches={branches} />
-							</div>
-						</>
-					)}
-				</Card>
-			</div>
+								<div className="flex justify-center items-center">
+									<DeployForm gitUrl={repoUrl} branches={branches} />
+								</div>
+							</>
+						)}
+					</Card>
+				</div>
+			</ClerkProvider>
 		</>
 	);
 };
