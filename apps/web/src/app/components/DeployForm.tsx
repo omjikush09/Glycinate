@@ -74,7 +74,7 @@ export default function DeployForm({
 					const data = await fetch(
 						nodeEnv === "development"
 							? `http://localhost:3000/api/checkprojectname/${projectName}`
-							: `https://glycinate.in/api/checkprojectname/${projectName}`
+							: `https://www.glycinate.in/api/checkprojectname/${projectName}`
 					);
 					if (data.status != 200) {
 						form.setError("projectName", {

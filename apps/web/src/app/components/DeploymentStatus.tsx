@@ -31,7 +31,7 @@ export default function DeployMentStatus({
 				const data = await fetch(
 					nodeEnv === "development"
 						? `http://localhost:3000/api/status/${deploymentId}`
-						: `https://glycinate.in/api/status/${deploymentId}`
+						: `https://www.glycinate.in/api/status/${deploymentId}`
 				);
 				const body: {
 					status: "Deployed" | "Queued" | "Started" | "Failed";
