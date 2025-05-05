@@ -37,9 +37,11 @@ export const deployEnum = pgEnum("status", [
 
 export const deployMentTable = pgTable("deployment_table", {
 	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	projectId: integer("project_id"),
+	projectId: integer("project_id").references(() => projectTable.id, {
+		onDelete: "cascade",
+	}),
 	status: deployEnum(),
-	ecsBuildId:varchar("ecs_build_id")
+	ecsBuildId: varchar("ecs_build_id"),
 });
 
 export const deploymentRelation = relations(deployMentTable, ({ one }) => ({

@@ -1,0 +1,1 @@
+ALTER TABLE "deployment_table" ADD CONSTRAINT "deployment_table_project_id_project_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."project"("id") ON DELETE cascade ON UPDATE no action;
