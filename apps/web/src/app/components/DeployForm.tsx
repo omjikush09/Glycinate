@@ -25,6 +25,7 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export const projctFormSchema = z.object({
 	gitUrl: z.string(),
@@ -64,6 +65,34 @@ export default function DeployForm({
 		},
 	});
 
+	const projectName = form.watch("projectName");
+	useEffect(() => {
+		const delayDebounce = setTimeout(async () => {
+			if (projectName) {
+				const nodeEnv = process.env.NODE_ENV;
+				try {
+					const data = await fetch(
+						nodeEnv === "development"
+							? `http://localhost:3000/api/checkprojectname/${projectName}`
+							: `https://glycinate.in/api/checkprojectname/${projectName}`
+					);
+					if (data.status != 200) {
+						form.setError("projectName", {
+							type: "validate",
+							message: "Project Name is already taken. Try other",
+						});
+					}else{
+						form.clearErrors("projectName")
+					}
+				} catch (error) {
+					console.error(error);
+				}
+			}
+		}, 100);
+		return () => clearTimeout(delayDebounce);
+	}, [projectName]);
+
+
 	async function onSubmit(values: z.infer<typeof projctFormSchema>) {
 		const authToken = await session?.getToken();
 		console.log(authToken);
@@ -100,9 +129,6 @@ export default function DeployForm({
 			console.error(error);
 			toast.error(String(error));
 		}
-
-		console.log("df");
-		console.log(values);
 	}
 
 	return (
@@ -205,7 +231,7 @@ export default function DeployForm({
 							</FormItem>
 						)}
 					/>
-					<Button className="w-full bg-blue-800" type="submit">
+					<Button className="w-full bg-blue-800 cursor-pointer" type="submit">
 						Deploy
 					</Button>
 				</form>

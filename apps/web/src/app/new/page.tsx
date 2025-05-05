@@ -27,6 +27,16 @@ const AddURL = () => {
 							className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
 							size={20}
 						/>
+						{!gitUrl && (
+							<div
+								className="absolute right-2 py-1 text-white  cursor-pointer "
+								onClick={() => {
+									setGitUrl("https://github.com/kelixirr/ReactDevs.git");
+								}}
+							>
+								Fill Test Data
+							</div>
+						)}
 						<Input
 							value={gitUrl}
 							onChange={handleInputChange}
@@ -39,6 +49,7 @@ const AddURL = () => {
 					</div>
 					<Button
 						type="button"
+						className="cursor-pointer"
 						onClick={() => redirect(`new/deploy?gitUrl=${gitUrl}`)}
 					>
 						Continue
