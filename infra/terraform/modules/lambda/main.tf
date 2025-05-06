@@ -82,8 +82,10 @@ resource "aws_lambda_function" "add_to_queue" {
 
   environment {
     variables = {
-      SQS_QUEUE_URL = var.sqs_url,
-      DATABASE_URL  = var.DATABASE_URL
+      SQS_QUEUE_URL            = var.sqs_url,
+      DATABASE_URL             = var.DATABASE_URL
+      UPSTASH_REDIS_REST_URL   = var.UPSTASH_REDIS_REST_URL
+      UPSTASH_REDIS_REST_TOKEN = var.UPSTASH_REDIS_REST_TOKEN
     }
   }
 }

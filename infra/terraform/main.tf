@@ -29,6 +29,8 @@ module "lambda" {
   AWS_BUCKET_FINAL_ARN        = module.s3.s3_bucket_final_arn
   AWS_BUCKET_FINAL_NAME       = var.AWS_BUCKET_FINAL_NAME
   DATABASE_URL                = var.DATABASE_URL
+  UPSTASH_REDIS_REST_URL      = var.UPSTASH_REDIS_REST_URL
+  UPSTASH_REDIS_REST_TOKEN    = var.UPSTASH_REDIS_REST_TOKEN
 }
 
 module "iam" {
@@ -72,7 +74,12 @@ variable "AWS_BUCKET" {
 variable "AWS_BUCKET_FINAL_NAME" {
   type = string
 }
-
 variable "DATABASE_URL" {
+  type = string
+}
+variable "UPSTASH_REDIS_REST_URL" {
+  type = string
+}
+variable "UPSTASH_REDIS_REST_TOKEN" {
   type = string
 }

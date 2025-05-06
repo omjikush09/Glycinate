@@ -44,3 +44,10 @@ variable "AWS_BUCKET_FINAL_NAME" {
 variable "DATABASE_URL" {
   type = string
 }
+
+variable "UPSTASH_REDIS_REST_URL" {
+  type = string
+}
+variable "UPSTASH_REDIS_REST_TOKEN" {
+  type = string
+}
