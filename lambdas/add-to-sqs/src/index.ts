@@ -6,6 +6,7 @@ import {
 import { APIGatewayEvent } from "aws-lambda";
 import { db } from "@repo/db/index";
 import { deployMentTable, projectTable } from "@repo/db/schema";
+import { ratelimit } from "./db";
 
 const config = {
 	region: "us-east-1",
@@ -55,6 +56,14 @@ export const handler = async (event: APIGatewayEvent) => {
 			statusCode: 400,
 			body: JSON.stringify("No user Id found"),
 		};
+	}
+
+	const { success } = await ratelimit.limit(userId);
+	if(!success){
+		return {
+			statsCode:429,
+			body:JSON.stringify({error:"Too many request"})
+		}
 	}
 
 	let bodyParsed: DeployEvent;
