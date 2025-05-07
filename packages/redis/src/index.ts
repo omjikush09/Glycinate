@@ -1,4 +1,4 @@
-import { Ratelimit } from "@upstash/ratelimit"; 
+import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
 const ratelimit = new Ratelimit({
@@ -8,4 +8,4 @@ const ratelimit = new Ratelimit({
 	prefix: "@upstash/ratelimit",
 });
 
-export {ratelimit}
+export { ratelimit };

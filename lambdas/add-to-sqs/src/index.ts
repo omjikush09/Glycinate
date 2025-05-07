@@ -6,7 +6,7 @@ import {
 import { APIGatewayEvent } from "aws-lambda";
 import { db } from "@repo/db/index";
 import { deployMentTable, projectTable } from "@repo/db/schema";
-import { ratelimit } from "./db";
+import { ratelimit } from "@repo/redis";
 
 const config = {
 	region: "us-east-1",
@@ -43,14 +43,14 @@ export const handler = async (event: APIGatewayEvent) => {
 	const body = event.body;
 	// console.log("THIS IS BODY+ " + body);
 
-	if (!body ) {
+	if (!body) {
 		console.log("Missing body log");
 		return {
 			statusCode: 400,
 			body: JSON.stringify("No body found"),
 		};
 	}
-	if ( !userId) {
+	if (!userId) {
 		console.log("Missing userID log" + userId);
 		return {
 			statusCode: 400,
@@ -59,11 +59,11 @@ export const handler = async (event: APIGatewayEvent) => {
 	}
 
 	const { success } = await ratelimit.limit(userId);
-	if(!success){
+	if (!success) {
 		return {
-			statsCode:429,
-			body:JSON.stringify({error:"Too many request"})
-		}
+			statsCode: 429,
+			body: JSON.stringify({ error: "Too many request" }),
+		};
 	}
 
 	let bodyParsed: DeployEvent;
