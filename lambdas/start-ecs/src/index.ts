@@ -9,6 +9,7 @@ import { SQSEvent } from "aws-lambda";
 import { db } from "@repo/db/index";
 import { deployMentTable } from "@repo/db/schema";
 import { eq } from "@repo/db/orm";
+import { error } from "console";
 type provider = "GITHUB";
 
 type DeployMentEvent = {
@@ -24,7 +25,7 @@ type DeployMentEvent = {
 
 export const handler = async (event: SQSEvent) => {
 	console.log(event);
-	if(event?.Records[0]===undefined) return;
+	if (event?.Records[0] === undefined) return;
 	const message: DeployMentEvent = JSON.parse(event.Records[0].body);
 	const config = {
 		region: "us-east-1",
@@ -97,9 +98,17 @@ export const handler = async (event: SQSEvent) => {
 	try {
 		const responseRunTask = await ecsClinet.send(taskRunCommand);
 		console.log("RespnseRunTask " + JSON.stringify(responseRunTask));
+		if (!responseRunTask?.tasks || !responseRunTask?.tasks[0]?.containers) {
+			throw new Error("Failed to start Tak");
+		}
 		const deploymentDbUpdate = await db
 			.update(deployMentTable)
-			.set({ status: "Started" })
+			.set({
+				status: "Started",
+				ecsBuildId: responseRunTask?.tasks[0]?.containers[0]?.taskArn
+					?.split("/")
+					.pop(),
+			})
 			.where(eq(deployMentTable.id, Number(message.deploymentId)));
 		console.log("DeploymentUpdate " + deploymentDbUpdate);
 	} catch (error) {

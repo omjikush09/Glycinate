@@ -9,6 +9,11 @@ variable "lambda_add_to_sqs_src_dir" {
 variable "lambda_unzip_dir" {
   type = string
 }
+
+variable "lambda_get_logs_dir" {
+  type = string
+}
+
 variable "lambda_ecs_trigger_role_arn" {
   type = string
 }

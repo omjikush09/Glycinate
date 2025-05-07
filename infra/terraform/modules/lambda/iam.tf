@@ -43,3 +43,41 @@ resource "aws_iam_role_policy_attachment" "unzip_lambda_basic_policy_attachment"
   role       = aws_iam_role.unzip_lambda.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
+
+
+# ****************** Lambda to get logs *************************
+
+resource "aws_iam_role" "lambda_get_logs" {
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = "sts:AssumeRole",
+        Principal = {
+           Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+resource "aws_iam_role_policy" "lambda_get_logs" {
+  role = aws_iam_role.lambda_get_logs.id
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "logs:Get*",
+          "logs:List*",
+        ],
+        Resource = "*"
+    }, ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_logs_basic_policy_attachment" {
+  role       = aws_iam_role.lambda_get_logs.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}

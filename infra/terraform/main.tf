@@ -19,6 +19,7 @@ module "lambda" {
   lambda_ecs_start_src_dir    = "${path.root}/../../lambdas/start-ecs/dist"
   lambda_add_to_sqs_src_dir   = "${path.root}/../../lambdas/add-to-sqs/dist"
   lambda_unzip_dir            = "${path.root}/../../lambdas/unzip-output/dist"
+  lambda_get_logs_dir         = "${path.root}/../../lambdas/get-logs/dist"
   lambda_put_sqs_arn          = module.iam.lambda_put_sqs_arn
   lambda_ecs_trigger_role_arn = module.iam.lambda_ecs_trigger_role_arn
   sqs_arn                     = module.sqs.sqs_arn

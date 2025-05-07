@@ -134,3 +134,24 @@ resource "aws_s3_bucket_notification" "s3_lambda_notification" {
   }
   depends_on = [aws_lambda_permission.aloow_s3]
 }
+
+
+# ********** Lambda to Fetch logs ************
+
+data "archive_file" "lambda_get_logs_dir" {
+  type        = "zip"
+  source_dir  = var.lambda_get_logs_dir
+  output_path = "${path.module}/lambda_get_logs_functioin_payload.zip"
+}
+
+resource "aws_lambda_function" "lambda_get_logs" {
+  architectures = ["arm64"]
+  function_name = "lambda_to_get_logs"
+  role          = aws_iam_role.lambda_get_logs.arn
+  handler       = "index.handler"
+  runtime       = "nodejs20.x"
+  filename      = "${path.module}/lambda_get_logs_functioin_payload.zip"
+  timeout       = 10
+  memory_size   = 128
+
+}

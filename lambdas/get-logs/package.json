@@ -1,0 +1,26 @@
+{
+	"name": "get-logs",
+	"version": "1.0.0",
+	"description": "",
+	"main": "dist/index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "node build.mjs"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"packageManager": "pnpm@10.10.0",
+	"dependencies": {
+		"@aws-sdk/client-cloudwatch-logs": "^3.804.0",
+		"@repo/redis": "workspace:*",
+		"get-logs": "link:",
+		"@repo/db": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/aws-lambda": "^8.10.149",
+		"esbuild": "^0.25.4",
+		"typescript": "^5.8.3",
+    "@repo/typescript-config":"workspace:*"
+	}
+}
