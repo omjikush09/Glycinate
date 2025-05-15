@@ -154,4 +154,12 @@ resource "aws_lambda_function" "lambda_get_logs" {
   timeout       = 10
   memory_size   = 128
 
+  environment {
+    variables = {
+      DATABASE_URL             = var.DATABASE_URL,
+      UPSTASH_REDIS_REST_URL   = var.UPSTASH_REDIS_REST_URL
+      UPSTASH_REDIS_REST_TOKEN = var.UPSTASH_REDIS_REST_TOKEN
+    }
+  }
+
 }
