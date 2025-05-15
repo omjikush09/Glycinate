@@ -7,7 +7,6 @@ import {
 	CloudWatchLogsClient,
 	GetLogEventsCommand,
 	GetLogEventsRequest,
-	ValidationException,
 } from "@aws-sdk/client-cloudwatch-logs";
 
 const config = {
@@ -16,17 +15,11 @@ const config = {
 
 const client = new CloudWatchLogsClient(config);
 
-export const handler = async (request?: APIGatewayEvent) => {
-	const body = request?.body;
-	if (!body) {
-		return {
-			statusCode: 400,
-			body: JSON.stringify({ error: "No body provided" }),
-		};
-	}
-	const bodyParsed = JSON.parse(body);
+export const handler = async (request: APIGatewayEvent) => {
+	console.log(request)
 	const userId = request.requestContext.authorizer?.jwt?.claims?.sub;
 	const parmas = request.pathParameters;
+	const query = request.queryStringParameters;
 	const deploymentId = Number(parmas?.["deploymentId"]);
 	if (!deploymentId || typeof deploymentId !== "number") {
 		return {
@@ -61,7 +54,7 @@ export const handler = async (request?: APIGatewayEvent) => {
 		logGroupName: "/ecs/glycinate-logs",
 		logStreamName: "ecs/glycinate_container/" + deployment[0]?.ecsBuildId,
 		startFromHead: true,
-		nextToken: bodyParsed.nextToken,
+		nextToken: query?.["nextToken"] ?? undefined,
 	};
 	try {
 		const command = new GetLogEventsCommand(input);
@@ -72,7 +65,7 @@ export const handler = async (request?: APIGatewayEvent) => {
 			body: JSON.stringify({ data: response }),
 		};
 	} catch (error: any) {
-		console.error("Failed to get error " + error);
+		console.error("Failed to get log error " + error);
 		return {
 			statusCode: 500,
 			body: JSON.stringify({ error: error?.message }),

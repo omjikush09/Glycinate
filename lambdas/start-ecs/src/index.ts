@@ -9,7 +9,7 @@ import { SQSEvent } from "aws-lambda";
 import { db } from "@repo/db/index";
 import { deployMentTable } from "@repo/db/schema";
 import { eq } from "@repo/db/orm";
-import { error } from "console";
+
 type provider = "GITHUB";
 
 type DeployMentEvent = {
@@ -110,7 +110,7 @@ export const handler = async (event: SQSEvent) => {
 					.pop(),
 			})
 			.where(eq(deployMentTable.id, Number(message.deploymentId)));
-		console.log("DeploymentUpdate " + deploymentDbUpdate);
+		console.log("DeploymentUpdate " + JSON.stringify(deploymentDbUpdate));
 	} catch (error) {
 		throw error;
 	}
